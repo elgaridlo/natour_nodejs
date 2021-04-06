@@ -82,7 +82,10 @@ app.use(
 
 // It calls mounting (variable tourRouter) to the  routing /api/v1/blablabla
 app.get('/', (req, res) => {
-  res.status(200).render('base');
+  res.status(200).render('base', {
+    tour: 'Mendaki Gunung',
+    user: 'Elga',
+  });
 });
 
 app.use('/api/v1/users', userRouter);
