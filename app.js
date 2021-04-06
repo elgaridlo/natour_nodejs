@@ -27,15 +27,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
 // DEVELOPMENT LOGGING
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+    app.use(morgan('dev'));
 }
 
 // LIMIT REQUEST FROM THE SAME API
 // it is use if the hacker or malware try to get in using brute guessing technique
 const limiter = rateLimit({
-  max: 100, //maximum limit
-  windowMs: 60 * 60 * 1000, //in time
-  message: 'Too many requst from thi IP, please try again in the hour!',
+    max: 100, //maximum limit
+    windowMs: 60 * 60 * 1000, //in time
+    message: 'Too many requst from thi IP, please try again in the hour!',
 });
 // it means the limiter apply to all /api route
 app.use('/api', limiter);
@@ -49,8 +49,8 @@ app.use('/api', limiter);
 // TEST MIDDLEWARE
 // You can create alot of middleware as you like
 app.use((req, res, next) => {
-  req.requestTime = new Date().toISOString();
-  next();
+    req.requestTime = new Date().toISOString();
+    next();
 });
 
 // BODY PARSER, READING DATA FROM body into req.body
@@ -68,24 +68,36 @@ app.use(xss());
 
 // Prevent parameter pollution
 app.use(
-  hpp({
-    whitelist: [
-      'duration',
-      'ratingsAverage',
-      'ratingsQuantity',
-      'maxGroupSize',
-      'difficulty',
-      'price',
-    ],
-  })
+    hpp({
+        whitelist: [
+            'duration',
+            'ratingsAverage',
+            'ratingsQuantity',
+            'maxGroupSize',
+            'difficulty',
+            'price',
+        ],
+    })
 );
 
 // It calls mounting (variable tourRouter) to the  routing /api/v1/blablabla
 app.get('/', (req, res) => {
-  res.status(200).render('base', {
-    tour: 'Mendaki Gunung',
-    user: 'Elga',
-  });
+    res.status(200).render('base', {
+        title: 'Mendaki Gunung',
+        user: 'Elga',
+    });
+});
+
+app.get('/overview', (req, res) => {
+    res.status(200).render('overview', {
+        title: 'All Tours'
+    })
+});
+
+app.get('/tour', (req, res) => {
+    res.status(200).render('tour', {
+        title: 'The Forest Hiker Tour'
+    })
 });
 
 app.use('/api/v1/users', userRouter);
@@ -93,9 +105,9 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/reviews', reviewRouter);
 
 app.all('*', (req, res, next) => {
-  next(
-    new AppError(`Cannot find this url ${req.originalUrl} on this server!`, 404)
-  );
+    next(
+        new AppError(`Cannot find this url ${req.originalUrl} on this server!`, 404)
+    );
 });
 
 app.use(errorHandler);
