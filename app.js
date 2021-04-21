@@ -10,6 +10,7 @@ const hpp = require('hpp');
 const userRouter = require('./routers/usersRouter');
 const tourRouter = require('./routers/toursRouter');
 const reviewRouter = require('./routers/reviewRouter');
+const viewRouter = require('./routers/viewRouter');
 const AppError = require('./utils/appError');
 const errorHandler = require('./controllers/errorController');
 
@@ -81,25 +82,7 @@ app.use(
 );
 
 // It calls mounting (variable tourRouter) to the  routing /api/v1/blablabla
-app.get('/', (req, res) => {
-    res.status(200).render('base', {
-        title: 'Mendaki Gunung',
-        user: 'Elga',
-    });
-});
-
-app.get('/overview', (req, res) => {
-    res.status(200).render('overview', {
-        title: 'All Tours'
-    })
-});
-
-app.get('/tour', (req, res) => {
-    res.status(200).render('tour', {
-        title: 'The Forest Hiker Tour'
-    })
-});
-
+app.use('/', viewRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/reviews', reviewRouter);
