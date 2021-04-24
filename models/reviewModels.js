@@ -57,7 +57,7 @@ reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 reviewSchema.pre(/^find/, function (next) {
   //  * This always point to the current query
   this.populate({
-    path: 'users',
+    path: 'user',
     select: 'name photo',
   });
   next();

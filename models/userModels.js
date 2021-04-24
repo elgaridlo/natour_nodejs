@@ -94,6 +94,7 @@ userSchema.methods.correctPassword = async function(
     candidatePassword,
     userPassword
 ) {
+    console.log('mokel = ', candidatePassword, userPassword)
     return await bycrpt.compare(candidatePassword, userPassword);
 };
 
