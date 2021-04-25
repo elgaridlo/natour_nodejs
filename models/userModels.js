@@ -63,25 +63,25 @@ const userSchema = new mongoose.Schema({
     toObject: { virtuals: true },
 });
 
-userSchema.pre('save', async function(next) {
-    // only run if the password is modified
-    if (!this.isModified('password')) {
-        return next();
-    }
-    // Hash the password cost of 12
-    this.password = await bycrpt.hash(this.password, 12);
-    this.passwordConfirm = undefined;
-    next();
-});
+// userSchema.pre('save', async function(next) {
+//     // only run if the password is modified
+//     if (!this.isModified('password')) {
+//         return next();
+//     }
+//     // Hash the password cost of 12
+//     this.password = await bycrpt.hash(this.password, 12);
+//     this.passwordConfirm = undefined;
+//     next();
+// });
 
-userSchema.pre('save', async function(next) {
-    // isNew is checking if the documents is new or not
-    if (!this.isModified('password' || this.isNew)) return next();
+// userSchema.pre('save', async function(next) {
+//     // isNew is checking if the documents is new or not
+//     if (!this.isModified('password' || this.isNew)) return next();
 
-    // substract the passwordChanget - 1000 because sometimes the token created a bit before than an time passwordChangedAt
-    this.passwordChangedAt = Date.now() - 1000;
-    next();
-});
+//     // substract the passwordChanget - 1000 because sometimes the token created a bit before than an time passwordChangedAt
+//     this.passwordChangedAt = Date.now() - 1000;
+//     next();
+// });
 
 userSchema.pre(/^find/, async function(next) {
     // this points to current querry

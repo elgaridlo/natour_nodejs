@@ -16,13 +16,18 @@ exports.getOverview = catchAsync(
     });
 
 exports.getTour = catchAsync(async (req, res) => {
-
+    console.log('req.params.slug = ', req.params.slug)
     const tour = await Tour.findOne({slug: req.params.slug}).populate({
         path: 'reviews',
         fields: 'review rating user'
     })
-
-    res.status(200).render('tour', {
+    console.log('tour - ', tour)
+    res.status(200)
+    .set(
+        'Content-Security-Policy',
+        'connect-src https://*.tiles.mapbox.com https://api.mapbox.com https://events.mapbox.com'
+    )
+    .render('tour', {
         title: `${tour.name} Tour`,
         tour
 

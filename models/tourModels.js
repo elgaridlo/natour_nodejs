@@ -98,18 +98,20 @@ const tourSchema = new mongoose.Schema(
       address: String,
       description: String,
     },
-    locations: {
-      // GeoJSON : must be Type string and enum only Pointer
-      type: {
-        type: String,
-        default: 'Point',
-        enum: ['Point'],
+    locations: [
+      {
+        // GeoJSON : must be Type string and enum only Pointer
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
       },
-      coordinates: [Number],
-      address: String,
-      description: String,
-      day: Number,
-    },
+    ],
     guides: [
       {
         type: mongoose.Schema.ObjectId,
@@ -146,6 +148,12 @@ tourSchema.virtual('reviews', {
 
 // * DOCUMENTS MIDDLEWATE: runs before .save and .create but it will not run if you call .insertMany
 tourSchema.pre('save', function (next) {
+  // this.locations.forEach(element => {
+  //   console.log('elemtn - ', element)
+  // })
+  console.log('this locations == ', this.locations)
+  console.log('this name == ', this.name)
+  
   this.slug = slugify(this.name, { lower: true });
   next();
 });
