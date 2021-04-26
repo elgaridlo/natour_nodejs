@@ -3,6 +3,8 @@ const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
@@ -14,6 +16,7 @@ const viewRouter = require('./routers/viewRouter');
 const AppError = require('./utils/appError');
 const errorHandler = require('./controllers/errorController');
 
+
 const app = express();
 // pug is provided by the express
 app.set('view engine', 'pug');
@@ -24,8 +27,41 @@ app.set('views', path.join(__dirname, 'views'));
 // app.use(express.static(`${__dirname}/public`));
 // we dont need to give / or anything because the path will provide the right path
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
 // SET SECURITY HTTP HEADERS
-app.use(helmet());
+app.use(helmet.contentSecurityPolicy(
+    {
+        directives: {
+            defaultSrc: ["'self'", 'data:', 'blob:'],
+       
+            baseUri: ["'self'"],
+       
+            fontSrc: ["'self'", 'https:', 'data:'],
+       
+            scriptSrc: ["'self'", 'https://*.cloudflare.com'],
+       
+            scriptSrc: ["'self'", 'https://*.stripe.com'],
+       
+            scriptSrc: ["'self'", 'http:', 'https://*.mapbox.com', 'data:'],
+       
+            frameSrc: ["'self'", 'https://*.stripe.com'],
+       
+            objectSrc: ["'none'"],
+       
+            styleSrc: ["'self'", 'https:', 'unsafe-inline'],
+       
+            workerSrc: ["'self'", 'data:', 'blob:'],
+       
+            childSrc: ["'self'", 'blob:'],
+       
+            imgSrc: ["'self'", 'data:', 'blob:'],
+       
+            connectSrc: ["'self'", 'blob:', 'https://*.mapbox.com'],
+       
+            upgradeInsecureRequests: [],
+          },
+    }
+));
 // DEVELOPMENT LOGGING
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
@@ -41,12 +77,6 @@ const limiter = rateLimit({
 // it means the limiter apply to all /api route
 app.use('/api', limiter);
 
-// Middleware routing
-// app.use((req, res, next) => {
-//   console.log('Hello from the middleware');
-//   next();
-// });
-
 // TEST MIDDLEWARE
 // You can create alot of middleware as you like
 app.use((req, res, next) => {
@@ -59,6 +89,8 @@ app.use((req, res, next) => {
 // limiting the amount of data that comes-in in one request
 app.use(express.json({ limit: '10kb' }));
 
+app.use(cookieParser())
+
 // Data sanitization againts NoSQL query injection. Note: if the app is server-side
 // it's remove all dollar sign
 app.use(mongoSanitize());
@@ -66,6 +98,12 @@ app.use(mongoSanitize());
 // Data sanitization againts XSS
 // if client input data using html format like <div>name</div>
 app.use(xss());
+
+// Middleware routing
+app.use((req, res, next) => {
+  console.log('req cookies = ', req.cookies)
+  next();
+});
 
 // Prevent parameter pollution
 app.use(
