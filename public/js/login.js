@@ -7,9 +7,14 @@ const login = async (email, password) => {
                 email, password
             }
         })
-        console.log(res)
+        console.log(res.data)
+        if(res.data.status === 'Success') {
+            window.setTimeout(() => {
+                location.assign('/')
+            },100)
+        }
     } catch (err) {
-        console.log(err.response.data)
+        alert(err.response.data.message)
     }
 }
 
