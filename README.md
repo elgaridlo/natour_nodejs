@@ -14,3 +14,8 @@ axios
 
 ## Tools yang digunakan untuk mendapatkan cookies
 cookies-parser it catched our jwt cookies when we are log in
+
+## Parcel-bundler
+digunakan untuk merangkum javascript menjadi bundler biar lebih enak dilihat dan rapi
+
+## install @babel/polyfill agar javascript bisa dijalan di browser yg lebih tua
